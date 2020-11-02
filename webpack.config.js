@@ -1,6 +1,7 @@
 const path = require("path");
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 module.exports = {
   entry: {
@@ -8,7 +9,7 @@ module.exports = {
   },
   output: {
     filename: "main.js",
-    path: path.resolve(__dirname, "./dist"),
+    path: path.resolve(__dirname, "./docs"),
   },
 
   module: {
@@ -19,8 +20,8 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
       },
       {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        test: /.s?css$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
       },
 
       {
@@ -36,6 +37,15 @@ module.exports = {
     }),
     new MiniCssExtractPlugin(),
   ],
+
+  optimization: {
+    minimize: true,
+    minimizer: [
+      // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
+      // `...`
+      new CssMinimizerPlugin(),
+    ],
+  },
 
   devServer: {
     open: true,
